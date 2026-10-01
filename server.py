@@ -27,7 +27,8 @@ def prepare(a):
     if not all((source/n).is_file() for n in required): raise RuntimeError('Data folder needs master-original.db and master-manifest.json; see DATA.md')
     if (PRIVATE/'account.json').exists(): raise RuntimeError('Account already configured; refusing to replace its data/configuration')
     if not (VENDOR/'config.yml').exists():
-        config=yaml.safe_load((VENDOR/'config.example.yml').read_text())
+        # force encoding to UTF-8 to avoid BOM issues on Windows; YAML library does not handle BOM
+        config=yaml.safe_load((VENDOR/'config.example.yml').read_text(encoding='utf-8'))
         password=secrets.token_hex(24)
         config.update(server_version='2.31.3',asset_version='1.96.0',local_assets=True,host='127.0.0.1',port=8125,
                       api_endpoint='https://lb-api.wds-stellarium.com',jwt_secret=secrets.token_hex(32))

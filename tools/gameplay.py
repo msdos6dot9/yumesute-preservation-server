@@ -545,7 +545,8 @@ async def story_details(request: Request, episodeMasterId: int):
         Path(__file__).resolve().parents[1] / "private/upstream/episode-manifest.json"
     )
     captured = (
-        json.loads(manifest.read_text()).get(str(episodeMasterId))
+        # force encoding to UTF-8 to avoid BOM issues on Windows; JSON library does not handle BOM
+        json.loads(manifest.read_text(encoding='utf-8')).get(str(episodeMasterId))
         if manifest.exists()
         else None
     )
