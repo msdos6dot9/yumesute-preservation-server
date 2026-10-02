@@ -11,6 +11,70 @@ pinned to `3cfca23267fb0f79d7336732db768e1510f20313`.
 [TeamOpenSirius/OpenSiriusServer](https://github.com/TeamOpenSirius/OpenSiriusServer)
 was an independent protocol reference, not a second backend merged into this release.
 
+## October 1, 2026 — Circle menu compatibility
+
+- PR #2 by [tomyuan520](https://github.com/tomyuan520) adds safe empty Circle
+  discovery/ranking responses and non-null support-company data, using the pinned
+  upstream models. Conflicts with newer onboarding/reward handlers were resolved.
+- **Server-tested and deployed to the development test server:** route precedence,
+  response shapes and account-scoped support levels. **Device-confirmed:** opening
+  the Circle menu succeeds. The rank-30 unlock presentation has not been separately
+  confirmed. PR #2 has been merged into main.
+- Circle creation/joining and multiplayer remain unsupported. This compatibility
+  test does not add a completed gameplay group; the inventory remains **30**.
+
+## October 1, 2026 — Recover accounts from the local setup page
+
+- Added a Japanese/English recovery page on the server computer. Enter official
+  transfer credentials to download a verified account ZIP without changing any save.
+  The page explicitly retries the official service even when normal login is already
+  associated with a starter. Recovery errors never create a starter through this page.
+- Optional import is a separate, confirmed action after downloading. It retains the
+  starter and never overwrites progress for an official account already stored locally.
+  Verified credentials previously assigned by outage fallback can be reassigned to the
+  recovered save; ordinary login remains local-first.
+- Backups are also retained in `private/recovered-exports`. Import sessions expire
+  after 15 minutes or a server restart. The page accepts requests only on loopback
+  with same-origin checks; it is not a public credential-collection website.
+- **Server-tested:** ZIP validity, download without account mutation, credential and
+  outage failures, explicit fallback reassignment, retained local progress, single-use
+  import, and host/origin/request-token checks. The existing 34 tests also pass.
+- **Device-confirmed:** browser backup/import followed by game login restored the
+  account successfully. In-game transfer recovery into a clean local server is also
+  device-confirmed. Normal title login using an official token also recovered the
+  account into a clean local server successfully.
+  Official API availability and compatible app/media remain prerequisites.
+- Gameplay inventory remains **30 groups**. This extends account-preservation tooling
+  around the credited pinned upstream backend, not gameplay or multiplayer support.
+
+## October 1, 2026 — Recover official accounts directly at login
+
+- Unknown official login tokens or transfer ID/password pairs can now retrieve the
+  official account snapshot and save it locally, without a separate exporter.
+  Recognized local credentials always use the local save before any official request.
+- Imports and credential mappings commit together. Interrupted imports roll back;
+  retries and additional verified credentials never overwrite existing local progress.
+- Incorrect credentials return an error. Before any official recovery, an unavailable
+  official service selects the existing starter without resetting it. After recovery,
+  an unknown credential during an outage returns an error instead of changing accounts.
+  Unknown faults and malformed data never trigger the starter fallback.
+- **Live API-tested:** both official-token and transfer-password recovery retrieved a
+  2,590-record snapshot after EOS. This is account state, not downloadable game media.
+- **Server-tested:** concurrent retries, transaction rollback, invalid credentials,
+  outages, malformed replies, service restart and real transfer/auth/data routes.
+  A simulated total EOS forbids official calls for known accounts and verifies that
+  local progression survives. The existing 34-test suite and running-server checks pass.
+- **Device-confirmed:** entering official transfer credentials in game automatically
+  recovered the account into a clean local server and allowed play. Normal title login
+  using a retained official token also recovered the account after a separate reset.
+- Recovery is enabled by default and configurable with `official_account_recovery`.
+  One official identity is supported per personal installation, alongside its retained
+  starter. Apple sign-in recovery is not implemented. Official availability is needed
+  only for initial retrieval; preserve the database, secrets, app and media afterward.
+  No guarantee of permanent official access or exact gameplay parity is implied.
+- Updated Japanese/English setup and backup notes. The gameplay inventory remains
+  **30 groups**; account recovery is supporting infrastructure.
+
 ## October 1, 2026 — Starter accounts and difficulty unlocks
 
 ### Start playing without an account import
@@ -214,5 +278,5 @@ it does not mean every group was wholly absent upstream or is fully verified.
 | 14 | Auditions (scoring incomplete) | 29 | Theater/MV viewing records |
 | 15 | Photo development/storage (rarity provisional) | 30 | Persistent reroll sessions (approximate odds) |
 
-Account export/import, client compatibility, asset preservation, downloader tooling
+Account export/import and automatic recovery, client compatibility, asset preservation, downloader tooling
 and documentation support these features and are not additional gameplay groups.
