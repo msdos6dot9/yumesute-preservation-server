@@ -70,6 +70,22 @@ def install(app):
         from scripts._sirius import _unpack_all,_decompress
         parts=[_decompress(x) for x in _unpack_all(response.body)]
         parts[2]=await build_present(app,uid,'GachaReRoll')
+        # must delete parts[2][x][1][0] = 1933, i hate it
+        parts[2] = [
+            item for item in parts[2]
+            if not (len(item) > 1 and len(item[1]) > 0 and item[1][0] == 1933)
+        ]
+        # collect remaining present IDs from parts[2] and filter parts[1] accordingly
+        present_ids = {
+            item[1][0]
+            for item in parts[2]
+            if len(item) > 1 and item[1]
+        }
+        # filter parts[1] by present_ids
+        parts[1] = [
+            item for item in parts[1]
+            if item and item[0] in present_ids
+        ]
         from fastapi.responses import Response
         return Response(b''.join(msgpack.packb(x,use_bin_type=True) for x in parts),media_type='application/vnd.msgpack')
 
