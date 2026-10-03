@@ -1,6 +1,22 @@
 # Yumesute Preservation Server
 
-[日本語](README.md) · **English**
+[日本語](README.ja-jp.md) · **English**
+
+## 0. Current Upstreams (Last updated: Oct 03, 2026)
+
+<h3 id="original">1. Original:</h3>
+
+[Alehero/yumesute-preservation-server, commit 3656c33](https://github.com/Alehero/yumesute-preservation-server/tree/3656c33c15a3a76c13a26720f405767e76f425db)
+
+<h3 id="backends">2. Backends:</h3>
+
+[UnknownSekai/server-of-dreams, commit 23edc73](https://github.com/UnknownSekai/server-of-dreams/tree/23edc736020d4da37205674382c12f8236c12bdf)
+
+<h3 id="protocol">3. Protocol Reference:</h3>
+
+[TeamOpenSirius/OpenSiriusServer, commit 536004f](https://github.com/TeamOpenSirius/OpenSiriusServer/tree/536004f17e174e2190d247edad2622ca2133b181)
+
+## 1. Introduction
 
 An unofficial local server for preserved **World Dai Star: Yume no Stellarium** data. Built on [UnknownSekai/server-of-dreams](https://github.com/UnknownSekai/server-of-dreams), with additions and repairs for progression, upgrades, rewards, and customization. The upstream implementation made this work possible.
 
@@ -11,7 +27,7 @@ An unofficial local server for preserved **World Dai Star: Yume no Stellarium** 
 - Home, solo play, results surviving restart, and several progression features were device-confirmed in the development setup. This is distinct from device-testing the entire release installer.
 - This is an early **personal, home-LAN** package, not a public multi-user hosting service. Each installation supports one recovered official identity alongside its retained starter save. Windows instructions are provided but are not device-tested.
 
-## Requirements
+## 2. Requirements
 
 1. A device with a compatible game client. **“Fresh account” does not mean a fresh 3.0.0 app installation will work.**
 2. Mac or Windows PC on the same Wi-Fi. No USB cable is required for play; the optional iOS rollback procedure needs one.
@@ -20,7 +36,7 @@ An unofficial local server for preserved **World Dai Star: Yume no Stellarium** 
 5. A local game-data folder arranged as described in [DATA.md](DATA.md). **It is not included in an account-export ZIP.** You can try the official-CDN downloader below while those files remain available. Having media cached on an iPad does not automatically make it exportable to the PC.
 6. Optional: an existing account-export ZIP, or your official linking ID/password. Automatic recovery can retrieve your save while the official authentication and account-data endpoints remain available; an exporter is not required for that path.
 
-## Quick start
+## 3. Quick start
 
 [Download ZIP](https://github.com/Alehero/yumesute-preservation-server/archive/refs/heads/main.zip), extract it, and open Terminal or PowerShell in that folder. Run all commands below from there. First setup downloads dependencies and the pinned upstream source, so internet access is needed for installation.
 
@@ -81,7 +97,7 @@ A clean client with no token uses the local starter. Registration reuses that sa
 
 Keep the computer awake and terminal open. To stop: **turn WireGuard off, then press Control+C**. Stop PostgreSQL with `docker compose stop`. Next time, run `docker compose up -d --wait db` and `server.py start`. Do not re-import your account each session.
 
-## Download an official-account backup from your browser
+## 4. Download an official-account backup from your browser
 
 With the server running, open **[Account recovery](http://127.0.0.1:8125/recovery)**
 on the **server computer**, or follow its setup-page link. Use the chosen backend
@@ -96,7 +112,7 @@ Data Link screen to select the local recovered account. This explicit flow also
 works when ordinary login is already linked to a starter. It never falls back to a
 starter on failure. Initial recovery still requires working official endpoints.
 
-## Status
+## 5. Status
 
 | Area | Status |
 |---|---|
@@ -109,7 +125,7 @@ starter on failure. Initial recovery still requires working official endpoints.
 | Unlock-all / complete no-limits mode | Not included in this release |
 | Client 3.0.0 / new app installation | Use 2.31.3; see the rollback guide for compatibility details |
 
-## Troubleshooting
+## 6. Troubleshooting
 
 - **Wrong LAN address:** `uv run --locked python server.py start --host 192.168.1.23` (use your computer's address). Re-import the changed QR configuration.
 - **Port conflict:** defaults are backend TCP 8125 (loopback), WireGuard UDP 51822, certificate TCP 8766, and PostgreSQL TCP 55433 (loopback). Use `start --port 8126 --wg-port 51823 --cert-port 8767`. Change DB port in both `.env` and `vendor/server-of-dreams/config.yml` before initialization.
@@ -120,9 +136,13 @@ starter on failure. Initial recovery still requires working official endpoints.
 
 See [DATA.md](DATA.md) for backups, data layout, and existing PostgreSQL. Issues in Japanese or English are welcome. Include OS/client versions, the failing step, and a sanitized error. **Do not upload account ZIPs, private folders, QR codes, or linking credentials.**
 
-## Development and attribution
+## 7. Development and attribution
 
-Backend: [server-of-dreams](https://github.com/UnknownSekai/server-of-dreams), pinned at `3cfca23267fb0f79d7336732db768e1510f20313`. Protocol reference: [OpenSiriusServer](https://github.com/TeamOpenSirius/OpenSiriusServer), `536004f17e174e2190d247edad2622ca2133b181`. These two backends have not been merged.
+Backend: [server-of-dreams](#backends). 
+
+Protocol reference: [OpenSiriusServer](#protocol).
+
+These two backends have not been merged.
 
 Server extensions are GPL-3.0. Exporter-derived code retains its MIT notice. See [THIRD_PARTY.md](THIRD_PARTY.md). This community project is unaffiliated with the game's operators or rights holders.
 

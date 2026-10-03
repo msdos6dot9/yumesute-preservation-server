@@ -1,36 +1,52 @@
 # Yumesute Preservation Server
 
-**日本語** · [English](README.en.md)
+[日本語](README.ja-jp.md) · **English**
 
-「ワールドダイスター 夢のステラリウム」の保存済みデータを、自分のパソコン上で利用するための非公式ローカルサーバーです。[UnknownSekai/server-of-dreams](https://github.com/UnknownSekai/server-of-dreams) を土台に、進行・育成・報酬・カスタマイズなどの機能を補っています。元の実装に深く感謝します。
+## 0. Current Upstreams (Last updated: Oct 03, 2026)
 
-**まずお読みください：これは公式サービスの復旧や、アプリを配布するものではありません。アカウントZIPだけでは起動できません。** 対応版アプリ、マスターデータ、必要な楽曲・画像などのデータを別途用意する必要があります。このリポジトリにアプリやゲーム素材、他の方のアカウントは含まれません。
+<h3 id="original">1. Original:</h3>
 
-- 動作確認の基準：既存の **iOS版 2.31.3（ビルド 2.31.3.425）**、M1 iPad Pro、iPadOS 26.6.1、macOS 26.2。
-- **3.0.0での動作は保証できません。** 2.31.3を使用してください。導入・互換性の詳細は[旧版への戻し方](IOS-ROLLBACK.md)を参照してください。動作している旧バージョンのアプリは削除・更新しないでください。
-- 開発環境では、ホーム、ソロプレイ、結果の再起動後の保存、複数の育成・進行機能を実機で確認しています。配布用セットアップ全体の実機確認とは区別してください。
-- 公開マルチユーザーサーバーではなく、**個人・家庭内LAN向け**のプレビューです。1環境で公式アカウント1件を復元でき、元の初期セーブも保持します。Windows手順は用意していますが、実機未検証です。
+[Alehero/yumesute-preservation-server, commit 3656c33](https://github.com/Alehero/yumesute-preservation-server/tree/3656c33c15a3a76c13a26720f405767e76f425db)
 
-## 用意するもの
+<h3 id="backends">2. Backends:</h3>
 
-1. 対応版のゲームが入った端末。**「新規アカウント」は「新しくダウンロードした3.0.0で遊べる」という意味ではありません。**
-2. 同じWi-FiにつながるMacまたはWindows PC。通常のプレイにUSB接続は不要です。旧版への変更手順では使用します。
-3. [uv](https://docs.astral.sh/uv/getting-started/installation/)、[Git](https://git-scm.com/downloads)、起動済みの [Docker Desktop](https://docs.docker.com/desktop/)（PostgreSQL用）。既存のPostgreSQLを使う方は[詳細手順](DATA.md)へ。
-4. 端末側の [WireGuard](https://www.wireguard.com/install/)。
-5. [DATA.md](DATA.md) の構成で用意したローカルゲームデータ。**アカウント保存ツールのZIPには含まれません。** 未取得の場合は、配信が続いている間に限り、下記の公式CDNからの取得を試せます。iPadにキャッシュがあるだけで、PCから取り出せるとは限りません。
-6. 任意：保存済みのアカウントZIP、または公式の連携ID・連携パスワード。公式の認証・アカウント取得APIが応答する間は、保存ツールを使わずに自動復元を試せます。
+[UnknownSekai/server-of-dreams, commit 23edc73](https://github.com/UnknownSekai/server-of-dreams/tree/23edc736020d4da37205674382c12f8236c12bdf)
 
-## クイックスタート
+<h3 id="protocol">3. Protocol Reference:</h3>
 
-[ZIPをダウンロード](https://github.com/Alehero/yumesute-preservation-server/archive/refs/heads/main.zip)して展開し、ターミナル／PowerShellでそのフォルダーを開きます。以降のコマンドはすべてそのフォルダーで実行します。初回は依存パッケージと指定コミットの上流ソースをダウンロードするため、インターネット接続が必要です。
+[TeamOpenSirius/OpenSiriusServer, commit 536004f](https://github.com/TeamOpenSirius/OpenSiriusServer/tree/536004f17e174e2190d247edad2622ca2133b181)
 
-### 0. アプリのバージョンを確認
+## 1. Introduction
 
-対応版は **2.31.3（ビルド2.31.3.425）** です。誤って3.0.0に更新した場合は、先に[Mac・iOS向けの旧版への戻し方](IOS-ROLLBACK.md)をご覧ください。確認済みの上書き手順と制限を記載しています。既に動いている旧版はそのまま保管してください。旧版への変更にはUSBが必要ですが、通常のプレイには不要です。
+An unofficial local server for preserved **World Dai Star: Yume no Stellarium** data. Built on [UnknownSekai/server-of-dreams](https://github.com/UnknownSekai/server-of-dreams), with additions and repairs for progression, upgrades, rewards, and customization. The upstream implementation made this work possible.
 
-### 1. データを準備してデータベースを起動
+**Read first: this does not restore the official service or provide the game app. An account ZIP alone is not enough.** You need a compatible installed client, master data, and the media needed by that client. This repository does not distribute an IPA/APK, game media, or anyone's account.
 
-新しく準備する場合は、公式CDNから基準版のiOSデータを直接取得できます。
+- Reference device: existing **iOS 2.31.3 client (build 2.31.3.425)**, M1 iPad Pro, iPadOS 26.6.1, macOS 26.2.
+- **Compatibility with 3.0.0 is not guaranteed.** Use 2.31.3; see the [rollback guide](IOS-ROLLBACK.en.md) for installation and compatibility details. Do not delete or update a working older client.
+- Home, solo play, results surviving restart, and several progression features were device-confirmed in the development setup. This is distinct from device-testing the entire release installer.
+- This is an early **personal, home-LAN** package, not a public multi-user hosting service. Each installation supports one recovered official identity alongside its retained starter save. Windows instructions are provided but are not device-tested.
+
+## 2. Requirements
+
+1. A device with a compatible game client. **“Fresh account” does not mean a fresh 3.0.0 app installation will work.**
+2. Mac or Windows PC on the same Wi-Fi. No USB cable is required for play; the optional iOS rollback procedure needs one.
+3. [uv](https://docs.astral.sh/uv/getting-started/installation/), [Git](https://git-scm.com/downloads), and running [Docker Desktop](https://docs.docker.com/desktop/) for PostgreSQL. Existing PostgreSQL users can follow [DATA.md](DATA.md).
+4. The official [WireGuard app](https://www.wireguard.com/install/) on the device.
+5. A local game-data folder arranged as described in [DATA.md](DATA.md). **It is not included in an account-export ZIP.** You can try the official-CDN downloader below while those files remain available. Having media cached on an iPad does not automatically make it exportable to the PC.
+6. Optional: an existing account-export ZIP, or your official linking ID/password. Automatic recovery can retrieve your save while the official authentication and account-data endpoints remain available; an exporter is not required for that path.
+
+## 3. Quick start
+
+[Download ZIP](https://github.com/Alehero/yumesute-preservation-server/archive/refs/heads/main.zip), extract it, and open Terminal or PowerShell in that folder. Run all commands below from there. First setup downloads dependencies and the pinned upstream source, so internet access is needed for installation.
+
+### 0. Check the app version
+
+Use **2.31.3 (build 2.31.3.425)**. If you accidentally updated to 3.0.0, follow the [Mac/iOS rollback guide](IOS-ROLLBACK.en.md) first. It documents our verified in-place replacement and its limits. Keep an already-working older installation unchanged. USB is needed for rollback, not normal play.
+
+### 1. Prepare data and start the database
+
+For a new setup, download the reference iOS data directly from the official CDN:
 
 ```sh
 uv run --locked python download_data.py
@@ -38,115 +54,120 @@ uv run --locked python server.py prepare --data-dir data
 docker compose up -d --wait db
 ```
 
-公式ゲームへのログインは不要です。マスター、iOS 1.96.0のアセット（音声・MV用素材など）、譜面・設定ファイル、マスターに記載されたコミック、上流アーカイブで不足していたシナリオ30件を取得します。取得元と準備後のコピーを合わせて、**空き容量は約45 GB**を目安にしてください。実際の容量は変わります。取得中はPCをスリープさせないでください。中断後は同じコマンドで再開できます。完了済みファイルはチェックサムを確認してスキップし、途中のファイルはそのファイルの先頭から再取得します。
+The downloader does not need an official game login. It fetches master data, iOS 1.96.0 asset bundles (including audio/MV resources), chart/config files, master-listed comics, and 30 supplemental story scripts missing from the pinned upstream archive. Allow roughly **45 GB of free space** for the downloaded source plus the prepared copy; actual usage varies. Keep the computer awake. Rerun the same download command after interruption: completed files are checksum-checked and skipped; an interrupted file restarts from its beginning.
 
-**2026年9月29日に一部ファイルの取得を確認しましたが、今後の配信や全件取得は保証できません。** 失敗は `data/download-report.jsonl` に記録します。保存作業時点でも、一部の譜面は404でした。不足があると終了コード2になるため、準備へ進む前にレポートを確認してください。一部の機能が動いても、完全な保存を意味しません。アプリ本体や全素材の取得保証、3.0.0への対応は含みません。確認済みのメイン・カードサイドストーリーの不足分は対象に追加しました。[シナリオの確認範囲](STORY_COVERAGE.md)をご覧ください。[詳細](DATA.md)もご確認ください。
+**Availability was sampled on September 29, 2026; it is not guaranteed.** Read `data/download-report.jsonl` for failures. Some master-listed charts already returned 404 in the preservation capture. The command exits with code 2 if any media is missing; review the report before proceeding. A partial download may support some features, but is not a complete installation. This downloader does not supply the app, fix 3.0.0, or guarantee every story/banner. The identified main/card story-script gaps are covered; see [story coverage](STORY_COVERAGE.md). See [DATA.md](DATA.md).
 
-すでにデータがある場合は取得を省略し、`uv run --locked python server.py prepare --data-dir "/path/to/game-data"` を実行してからDBを起動します。Windowsのパス例は `"C:\Users\You\Documents\game-data"` です。`prepare` は秘密鍵・パスワードを生成し、元データを変更せずコピーします。
+If you already have local game data, skip downloading and use `uv run --locked python server.py prepare --data-dir "/path/to/game-data"`, then start the database. A Windows path can be `"C:\Users\You\Documents\game-data"`. Preparation generates per-installation secrets and copies supplied files without changing the originals.
 
-### 2. 保存アカウントを復元する（任意）
+### 2. Restore a saved account (optional)
 
-**新しく始める方・公式アカウントの自動復元を試す方は、この手順を飛ばしてください。** 初回起動時に初期セーブを自動作成します。新規データは冒頭のチュートリアルから始まり、ゲーム内の登録時に入力した名前を保存します。
+**Starting fresh or trying automatic official recovery? Skip this step.** The server creates your starter save automatically when first started. New saves begin at the opening tutorial; the registration request saves the name entered in game.
 
-新規・インポート済みの両方に、**歌劇目録10,000個の常設プレゼント**を用意しています。プレゼントボックスの **楽曲解放サポート** から、1アカウントにつき1回受け取れます。受取期限はありません。付与前に `preservation-rules.json` の `preservation_song_tickets` で数量を変更できます（0で新規付与を停止）。以前の初期所持分は減らさず、そのアカウントも今回のプレゼントを受け取れます。公式イベントや全解放ではなく、楽曲・譜面の解放条件は残ります。
+All local accounts, including imports, receive a **permanent gift of 10,000 song tickets (歌劇目録)**. Claim **楽曲解放サポート** from Presents; it is available once per account with no expiry. Set `preservation_song_tickets` in `preservation-rules.json` before the gift is issued to change the amount (0 disables new issuance). Earlier direct starter grants are retained, so those accounts can also claim this gift. This is a local preservation reward, not an official event or unlock-all preset; song and chart unlock conditions still apply.
 
-保存ZIPを復元する場合だけ、**サーバーの初回起動前に**実行します。
+To restore an account export instead, run this **before the first server start**:
 
 ```sh
 uv run --locked python server.py import-account "/path/to/your-account.zip"
 ```
 
-保存した所持状況を取り込みます。既存アカウントへの上書きは拒否します。**元のZIPは保管してください。** ログイン情報の対応付け（bridge）がある場合は元の端末で通常のログインを試し、それ以外は下記の「データ連携」を使ってください。
+Import preserves captured ownership and refuses to overwrite existing accounts. **Keep the original ZIP.** If your export includes a login bridge, try normal login on the original installation; otherwise use Data Link below.
 
-### 3. 起動して端末を接続
+### 3. Start and connect the device
 
 ```sh
 uv run --locked python server.py start
 ```
 
-セットアップページがブラウザーで開きます。開かなければ `private/setup.html` を開いてください。
+A setup page opens in your browser. If it does not, open `private/setup.html`.
 
-1. 端末のWi-Fi設定で **HTTPプロキシをオフ**にし、保存ツール用などの他のWireGuardトンネルをオフにします。
-2. WireGuardの「トンネルを追加」→「QRコードから作成」で、ページのQRを読み取り、有効にします。QRには秘密鍵が入っているので公開しないでください。
-3. 端末のSafariでページに表示される証明書URLを開きます。
-4. 「設定 → 一般 → VPNとデバイス管理」からプロファイルをインストールします。
-5. 設定ページの証明書名・フィンガープリントを確認し、**「一般 → 情報 → 証明書信頼設定」で完全な信頼を有効**にします。同じ「mitmproxy」という名前でも別の証明書の場合があります。以前の証明書の再利用は[証明書の確認と引き継ぎ](#証明書の確認と引き継ぎ)を参照してください。インストールだけでは不十分です。
-6. ゲームを完全に終了して開き直し、タイトルから進みます。登録済みのローカルアカウントはそのまま読み込み、未登録の公式ログイントークンの場合は公式データの取得を試みます。
-7. 公式の連携情報で復元する場合は、タイトルの **メニュー → データ連携 → 連携パスワード入力** から、**公式の連携ID・連携パスワード**を入力し、表示名を確認してください。この環境の元の初期セーブやZIPから取り込んだセーブを選ぶ場合は、`private/linking-credentials.txt` の**ローカル連携情報**を使います。Appleでのサインインによる復元には未対応です。連携操作は、接続先端末で選択しているアカウントを変更します。
-8. ホーム → ソロプレイ → リザルト → アプリ再起動の順で、進行が保存されるか確認してください。
+1. Set the device's Wi-Fi **HTTP Proxy to Off**. Disable other WireGuard tunnels, including the exporter tunnel.
+2. In WireGuard, choose **Add a Tunnel → Create from QR code**, scan the setup-page QR, and turn it on. The QR contains a private key: do not share it.
+3. Open the displayed certificate URL in device Safari.
+4. Install the downloaded profile under **Settings → General → VPN & Device Management**.
+5. Match the certificate name/fingerprint shown in setup; another “mitmproxy” profile may have a different key. Reuse a working local store with `server.py start --ca-dir "/path/to/old/private/mitmproxy"` (saved for future starts). Enable **full trust** under **General → About → Certificate Trust Settings**. Installing the profile alone is insufficient.
+6. Fully close and reopen the game and enter from the title screen. Known local accounts load locally. An unrecognized official login token triggers an attempt to recover your official save.
+7. To recover using official credentials, choose **title Menu → データ連携 → 連携パスワード入力** and enter your **official linking ID and password**. Check the displayed account name. To select this installation's original starter or manually imported save instead, use the **local** credentials in `private/linking-credentials.txt`. Apple sign-in recovery is not implemented. Linking changes the account selected on the receiving device.
+8. Test **home → solo play → results → app restart**, checking that progress persists.
 
-**自動復元の動作：** 公式データの取得・保存が成功すると、以後は登録済みの連携情報でローカルのセーブを読み込み、公式には問い合わせません。連携情報が間違っている場合はエラーを返します。まだ公式アカウントを復元していない環境で公式に接続できない場合は、既存の初期セーブをリセットせず選択し、その連携情報をローカルに紐付けます。復元後に未登録の連携情報で接続できない場合は、初期セーブへ切り替えずエラーを返します。不正な応答・判別できないエラーでも初期セーブへは切り替えません。公式への問い合わせを無効にするには、`preservation-rules.json` の `official_account_recovery` を `false` にします。登録済みのローカルアカウントは引き続き利用できます。[復元とバックアップの詳細](DATA.md#automatic-account-recovery--アカウントの自動復元)も参照してください。
+**Recovery behavior:** a successful official fetch is saved transactionally; future logins with recognized credentials use the local copy without contacting the official server. Incorrect credentials return an error. If the official service is unavailable before any official save has been recovered, the server selects its existing starter without resetting it; that credential then stays linked locally. After recovery, an unknown credential during an outage returns an error rather than selecting a starter. Malformed responses and unrecognized errors never cause fallback. Set `official_account_recovery` to `false` in `preservation-rules.json` to disable official requests; known local accounts still work. See [recovery and backups](DATA.md#automatic-account-recovery--アカウントの自動復元).
 
-トークンのない新規クライアントは初期セーブを利用します。再登録で進行はリセットせず、端末ごとに別セーブを作る動作ではありません。登録APIは検証済みですが、新規クライアントの名前入力は実機未確認です。自動復元の対象はアカウントの状態であり、アプリやゲーム素材は別途必要です。初回取得が今後も可能とは限らないため、復元後はDBと設定をバックアップしてください。
+A clean client with no token uses the local starter. Registration reuses that save without resetting progress; it does not create a separate save per device. API checks cover registration, but clean-client name entry remains unverified. Official recovery retrieves account state, not the app or media. Its initial availability is not guaranteed; back up the recovered database and configuration.
 
-PCを起動したまま、ターミナルを開いておいてください。Macのスリープ中には接続できません。終了時は **WireGuardをオフ → ターミナルでControl+C**。データベースは `docker compose stop` で停止できます。次回は `docker compose up -d --wait db` と `server.py start` を実行します。アカウントを毎回取り込む必要はありません。
+Keep the computer awake and terminal open. To stop: **turn WireGuard off, then press Control+C**. Stop PostgreSQL with `docker compose stop`. Next time, run `docker compose up -d --wait db` and `server.py start`. Do not re-import your account each session.
 
-## ブラウザーから公式アカウントを保存する
+## 4. Download an official-account backup from your browser
 
-サーバーを起動した状態で、**サーバーを動かしているパソコン**から
-**[アカウント復元](http://127.0.0.1:8125/recovery)** を開いてください。
-セットアップページにもリンクがあります。ポートを変更した場合は、その番号を使用します。
-**公式の連携ID・連携パスワード**を入力すると、バックアップZIPを取得できます。
-Apple IDやローカルサーバーの連携情報ではありません。
-`private/recovered-exports` にもコピーを保存します。取得だけではセーブは変わりません。
+With the server running, open **[Account recovery](http://127.0.0.1:8125/recovery)**
+on the **server computer**, or follow its setup-page link. Use the chosen backend
+port if you changed it. Enter your **official linking ID/password**, not your Apple
+ID or local server credentials. The page downloads a verified ZIP and also keeps a
+private copy under `private/recovered-exports`; this does not change your save.
 
-ZIPを保存した後、必要であれば15分以内に「ローカルに取り込む」を選んでください。
-元の初期セーブは残り、同じ公式アカウントが既にある場合は進行を上書きしません。
-その後、ゲームの「データ連携」で公式の連携情報を入力し、復元したローカルアカウントを選択します。
-通常のログインが初期セーブに紐付いていても、このページから公式への再取得を試せます。
-失敗時に初期セーブへ切り替えることはありません。初回取得は公式APIの稼働状況に依存します。
+After saving the ZIP, optionally choose **Import locally** within 15 minutes.
+The starter is retained, and progress on an already-recovered official account is
+never overwritten. Then use your official linking credentials through the game's
+Data Link screen to select the local recovered account. This explicit flow also
+works when ordinary login is already linked to a starter. It never falls back to a
+starter on failure. Initial recovery still requires working official endpoints.
 
-## 対応状況
+## 5. Status
 
-| 項目 | 現在の状況 |
+| Area | Status |
 |---|---|
-| ソロプレイ、結果保存 | 対応。確認範囲はCHANGELOGを参照 |
-| 楽曲購入、育成、報酬、進行、衣装など | 30の機能グループを追加・修正。個別の確認範囲は[CHANGELOG](CHANGELOG.md) |
-| Anthology・公演の終了日時 | 保存用マスターの対象終了日時を延長。原本は保持 |
-| スコア・レッスン・制限回数 | 一部は近似・保存用の寛容な設定。公式と完全一致ではありません |
-| 新規アカウント | 自動作成・登録名の保存に対応。冒頭からの一連の操作は実機確認待ち |
-| マルチプレイ・サークル・シアターリーグ | 未対応／未完成。ログ取得済みを実装済みとは扱いません |
-| 全解放・完全な無制限モード | 今回のリリースには含まれません |
-| 3.0.0・新規アプリインストール | 2.31.3を使用してください。互換性の詳細は旧版への戻し方を参照 |
+| Solo gameplay and saved results | Supported; see CHANGELOG for validation details |
+| Purchases, upgrades, rewards, progression, customization | 30 implemented/repaired feature groups; see [CHANGELOG](CHANGELOG.md) for individual evidence |
+| Final-service Anthology/performance end dates | Relevant end dates extended in the served master; original retained |
+| Scoring, lessons, usage limits | Some values are approximations or generous preservation policies, not exact official parity |
+| Fresh accounts | Automatic creation and initial name saving supported; full opening sequence awaits device verification |
+| Multiplayer, circles, Theater League | Unsupported/incomplete; captured traffic is not a working implementation |
+| Unlock-all / complete no-limits mode | Not included in this release |
+| Client 3.0.0 / new app installation | Use 2.31.3; see the rollback guide for compatibility details |
 
-## 困ったとき
+## 6. Troubleshooting
 
-- **IPアドレスが違う**：`uv run --locked python server.py start --host 192.168.1.23`（自分のPCのLAN IPv4アドレスに変更）。QRを読み直してください。
-- **ポート競合**：既定はバックエンドTCP 8125（ループバックのみ）、WireGuard UDP 51822、証明書TCP 8766、PostgreSQL TCP 55433（ループバックのみ）。`start --port 8126 --wg-port 51823 --cert-port 8767` で変更できます。DBは初期化前に `.env` と `vendor/server-of-dreams/config.yml` の両方を変更します。
-- **証明書／トンネルが使えない**：同じLAN、ゲストWi-Fiの端末間隔離、PCのファイアウォール、完全な信頼を確認。必要な通信のみ家庭内ネットワークで許可してください。インターネットへのポート公開は不要です。
-- **画像・楽曲が出ない／404**：`doctor` と `logs/backend.log` を確認。ゲーム素材が不足している可能性があります。全ファイル数が多くても完全性の保証にはなりません。アプリのキャッシュは消さないでください。
-- **3.0.0で連携後もサービス終了のお知らせが表示される**：[旧版への戻し方](IOS-ROLLBACK.md)を参照し、対応版のクライアントを使用してください。
-- **DB接続失敗**：Docker Desktopの起動と `docker compose ps` を確認。既存ボリュームのパスワードは `.env` の変更だけでは変わりません。安易にボリュームを削除しないでください。
+- **Wrong LAN address:** `uv run --locked python server.py start --host 192.168.1.23` (use your computer's address). Re-import the changed QR configuration.
+- **Port conflict:** defaults are backend TCP 8125 (loopback), WireGuard UDP 51822, certificate TCP 8766, and PostgreSQL TCP 55433 (loopback). Use `start --port 8126 --wg-port 51823 --cert-port 8767`. Change DB port in both `.env` and `vendor/server-of-dreams/config.yml` before initialization.
+- **Certificate/tunnel failure:** check same LAN, guest-network isolation, computer firewall, and full certificate trust. Allow only the required traffic on your home network. Internet port forwarding is unnecessary.
+- **Missing images/songs or HTTP 404:** check `doctor` and `logs/backend.log`. Rerun the downloader for covered files, then copy recovered files into the matching server paths in DATA.md. Do not rerun prepare after configuring an account; it intentionally refuses that. Other missing media must be supplied locally. File counts are not proof of completeness. Do not clear the app cache to troubleshoot this.
+- **EOS after linking on 3.0.0:** use the compatible client version described in the [rollback guide](IOS-ROLLBACK.en.md).
+- **Database connection failure:** check Docker Desktop and `docker compose ps`. Changing `.env` does not change a password inside an existing database volume. Do not casually delete the volume.
 
-[バックアップ・データ形式・既存PostgreSQL](DATA.md)も参照してください。不具合報告は日本語・英語のどちらでも構いません。OS・アプリ版・止まった手順と、秘密情報を除いたエラーを記載してください。**アカウントZIP、privateフォルダー、QR、連携情報は公開しないでください。**
+See [DATA.md](DATA.md) for backups, data layout, and existing PostgreSQL. Issues in Japanese or English are welcome. Include OS/client versions, the failing step, and a sanitized error. **Do not upload account ZIPs, private folders, QR codes, or linking credentials.**
 
-## 開発・謝辞
+## 7. Development and attribution
 
-基盤：[server-of-dreams](https://github.com/UnknownSekai/server-of-dreams)、固定コミット `3cfca23267fb0f79d7336732db768e1510f20313`。プロトコルの参考：[OpenSiriusServer](https://github.com/TeamOpenSirius/OpenSiriusServer)、`536004f17e174e2190d247edad2622ca2133b181`。2つのサーバーを混ぜたものではありません。
+Backend: [server-of-dreams](#backends). 
 
-本リポジトリのサーバー拡張はGPL-3.0。保存ツール由来のコードにはMITの著作権表示も保持しています。[THIRD_PARTY.md](THIRD_PARTY.md)を参照してください。公式運営・権利者とは無関係の取り組みです。
+Protocol reference: [OpenSiriusServer](#protocol).
 
-単体テストは `uv run --locked python -m unittest discover -s tests -v` で実行できます（34件）。`tests/check_running.py` はポート8125で動作中の自分のテスト環境と、その環境の非公開連携情報を使ってAPIを確認します。連携情報は出力しません。他の方のサーバーに対して実行しないでください。
+These two backends have not been merged.
 
-### 証明書の確認と引き継ぎ
+Server extensions are GPL-3.0. Exporter-derived code retains its MIT notice. See [THIRD_PARTY.md](THIRD_PARTY.md). This community project is unaffiliated with the game's operators or rights holders.
 
-証明書は通常 `private/mitmproxy` に保存されます。更新時もこのフォルダーを保管してください。
-設定ページに証明書名とSHA-256フィンガープリントを表示します。
-「mitmproxy」という同じ名前でも、別のインストールで作られた証明書は異なります。
+Run the self-contained tests with `uv run --locked python -m unittest discover -s tests -v` (34 tests). `tests/check_running.py` additionally checks a running local test installation on port 8125 and reads its private linking credentials without printing them. Do not run it against someone else's server.
 
-以前のローカル環境で動作していた証明書を再利用する場合：
+### Certificate identity and reuse
+
+Each installation normally keeps its CA in `private/mitmproxy`. Preserve this
+directory across upgrades. The setup page shows the active certificate name and
+SHA-256 fingerprint: installing or trusting another certificate also named
+“mitmproxy” is not equivalent.
+
+If a previous local installation already works on your device, reuse its CA:
 
 ```sh
-uv run --locked python server.py start --ca-dir "/以前の環境への絶対パス/private/mitmproxy"
+uv run --locked python server.py start --ca-dir "/absolute/path/to/previous/private/mitmproxy"
 ```
 
-指定した場所は次回以降も使用されます。フォルダーを移動・削除せず、秘密鍵は公開しないでください。
-新規作成時の証明書名は `Yumesute Local …` です。既存の証明書は自動で置き換えません。
-設定ページに表示された証明書の「完全な信頼」を有効にし、ゲームを終了して開き直してください。
+The directory choice is remembered for later starts. Keep it available locally;
+never upload or distribute its private keys. Fresh stores receive a distinct
+`Yumesute Local …` name. Existing certificates are never silently replaced.
+Enable full trust for the exact certificate shown in setup, then fully restart
+the game. If login works but gacha hangs, check terminal TLS errors and certificate
+identity before clearing game data. Reusing the working CA resolved this symptom
+in our device test; the game's internal certificate-validation behavior remains
+unconfirmed.
 
-ログインできてもガチャ画面が開かない場合は、ゲームデータを削除する前に、
-ターミナルのTLSエラーと証明書を確認してください。
-動作済みの証明書を再利用することで改善した端末を確認していますが、
-ゲーム内部の証明書検証処理の詳細は未確認です。
-
-新規アカウントには「錆びついた胸に一雫の心を」のSTELLA・OLIVIER Iを解放した状態で付与します。端末に以前の難易度選択が残っていても選曲できるようにするための独自対応です。既存のローカル新規アカウントにも適用されます。インポートしたアカウントの進行状況は変更しません。
+Starter accounts include 「錆びついた胸に一雫の心を」 with STELLA and OLIVIER I unlocked, so a device remembering those difficulties has a selectable chart. This preservation fallback also applies to existing local starter saves; imported accounts retain their progression.
