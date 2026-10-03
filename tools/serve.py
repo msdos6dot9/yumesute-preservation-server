@@ -110,6 +110,8 @@ async def register_local_starter(request:Request):
 
 app.router.routes[0:0]=router.routes
 install_circle_compat(app)
+from multi_room_compat import install as install_multi_room_compat
+install_multi_room_compat(app)
 from reroll import install as install_reroll
 install_reroll(app)
 from preservation_gift import install as install_gift
